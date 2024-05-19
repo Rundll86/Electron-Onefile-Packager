@@ -233,6 +233,10 @@ class workspaceOpreator:
             shutil.rmtree("dist") if os.path.exists("dist") else ""
         print("Done.")
 
+    def start():
+        check_ehome()
+        subprocess.run([ehome, config["project"]["entry"]])
+
 
 default_config = {
     "project": {
