@@ -1,0 +1,17 @@
+{
+  "name": "electron-ofp",
+  "version": "1.0.0",
+  "description": "Package a electron project.",
+  "main": "index.js",
+  "scripts": {
+    "test": ";"
+  },
+  "author": "Rundll86",
+  "license": "ISC",
+  "files": [
+    "dist/eop.exe"
+  ],
+  "bin": {
+    "electron-eop": "dist/eop.exe"
+  }
+}
