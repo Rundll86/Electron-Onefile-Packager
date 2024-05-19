@@ -157,6 +157,7 @@ class workspaceOpreator:
                 encoding="utf8",
             ),
             ensure_ascii=False,
+            indent=4,
         )
         cmd = [
             get_relative_file("builder.exe"),
