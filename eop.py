@@ -1,5 +1,5 @@
 from urllib import request, parse
-import os, zipfile, argparse, subprocess, sys, shutil, json, threading, time, conkits
+import os, zipfile, argparse, subprocess, sys, shutil, json, threading, time, math
 
 
 def progressbar(percent, max):
@@ -83,30 +83,23 @@ def run_build(cmd, typea):
     buildok = True
 
 
-default_config = {
-    "project": {
-        "name": "some-app",
-        "entry": "index.js",
-        "files": [],
-        "dirs": [],
-        "excludes": [],
-    },
-    "build": {
-        "temp": "temp",
-        "clean": False,
-        "nodeModules": [],
-        "showTime": False,
-    },
-}
-config = default_config
-parser = argparse.ArgumentParser()
-parser.add_argument("action")
-args = parser.parse_args()
-ehome = None
-configname = "eop.config.json"
-buildok = False
-init_electron_home()
-load_config()
+def base_clean():
+    (
+        shutil.rmtree(config["build"]["temp"])
+        if os.path.exists(config["build"]["temp"])
+        else ""
+    )
+    shutil.rmtree("build") if os.path.exists("build") else ""
+    (
+        os.remove(config["project"]["name"] + ".spec")
+        if os.path.exists(config["project"]["name"] + ".spec")
+        else ""
+    )
+
+
+class argtype:
+    action: str
+    deep: bool
 
 
 class workspaceOpreator:
@@ -132,8 +125,17 @@ class workspaceOpreator:
         print("Done.")
 
     def build():
+        usetime = time.time()
+        args.deep = True
         workspaceOpreator.clean()
         check_ehome()
+        print("Checking write permission...")
+        targetoutput = os.path.join("dist", config["project"]["name"] + ".exe")
+        if os.path.exists(targetoutput):
+            try:
+                open(targetoutput, "wb")
+            except:
+                throw("Cannot write file")
         print("Setting up build temp...")
         if os.path.exists(config["build"]["temp"]):
             shutil.rmtree(config["build"]["temp"])
@@ -174,54 +176,88 @@ class workspaceOpreator:
         ]
         for i in config["build"]["nodeModules"]:
             if os.path.exists(os.path.join("node_modules", i)):
-                cmd.append("--add-data")
-                cmd.append(
+                print("Found valid module:", i)
+                data_name = (
                     os.path.join("node_modules", i)
                     + ";"
                     + os.path.join("app/node_modules", i)
                 )
+                cmd.append("--add-data")
+                cmd.append(data_name)
         threading.Thread(
             target=lambda: run_build(cmd, config["build"]["showTime"])
         ).start()
         pos = 0
-        offs = 1
+        bar_length = 10
+        runningbar_length = 3
+        flower = "-\\|/"
+        flower_pos = 0
+        timer = 0
         print("Generating...Please wait.")
         while not buildok:
+            # while True:
             data = ""
-            for i in range(10):
-                if pos >= i and pos <= i + 3:
+            for i in range(bar_length):
+                if (i >= pos and i <= pos + runningbar_length - 1) or (
+                    i > pos - (bar_length + 1)
+                    and i < pos - (bar_length - runningbar_length)
+                ):
                     data += "="
                 else:
                     data += "-"
-            pos += offs
-            if pos == 12:
-                offs = -1
-            elif pos == 0:
-                offs = 1
-            print(f"<{data}>", end="\r", flush=True)
+            pos += 1
+            if pos == bar_length + 1:
+                pos = 1
+            print(
+                f"<{data}> {flower[flower_pos]} {int((timer-timer%60)/60)}m{math.floor(timer)}s",
+                end="\r",
+                flush=True,
+            )
+            flower_pos += 1
+            if flower_pos == len(flower):
+                flower_pos = 0
             time.sleep(0.2)
-        print("Generated successfully." + " " * 10)
+            timer += 0.2
+        usetime = int(time.time() - usetime)
+        print(f"Generated successfully. Use: {usetime}s" + " " * (runningbar_length))
         if config["build"]["clean"]:
             workspaceOpreator.clean()
             sys.exit(0)
         print("Done.")
 
     def clean():
-        print("Cleaning...")
-        (
-            shutil.rmtree(config["build"]["temp"])
-            if os.path.exists(config["build"]["temp"])
-            else ""
-        )
-        shutil.rmtree("build") if os.path.exists("build") else ""
-        (
-            os.remove(config["project"]["name"] + ".spec")
-            if os.path.exists(config["project"]["name"] + ".spec")
-            else ""
-        )
+        print(f"Cleaning{'(Deep mode)' if args.deep else ''}...")
+        base_clean()
+        if args.deep:
+            shutil.rmtree("dist") if os.path.exists("dist") else ""
         print("Done.")
 
 
+default_config = {
+    "project": {
+        "name": "some-app",
+        "entry": "index.js",
+        "files": [],
+        "dirs": [],
+        "excludes": [],
+    },
+    "build": {
+        "temp": "temp",
+        "clean": False,
+        "nodeModules": [],
+        "showTime": False,
+    },
+}
+config = default_config
+parser = argparse.ArgumentParser()
+parser.add_argument("action")
+parser.add_argument("--deep", "-d", action="store_true", default=False)
+args: argtype = parser.parse_args()
+ehome = None
+configname = "eop.config.json"
+buildok = False
+init_electron_home()
+load_config()
 for i in workspaceOpreator.__dict__.keys():
     if check_string(args.action, i):
         workspaceOpreator.__dict__[i]()
