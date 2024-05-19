@@ -124,7 +124,10 @@ class workspaceOpreator:
             throw("Failed to register electron_home")
         print("Creating config file...")
         json.dump(
-            default_config, open(configname, "w", encoding="utf8"), ensure_ascii=False
+            default_config,
+            open(configname, "w", encoding="utf8"),
+            ensure_ascii=False,
+            indent=4,
         )
         print("Done.")
 
@@ -157,7 +160,6 @@ class workspaceOpreator:
                 encoding="utf8",
             ),
             ensure_ascii=False,
-            indent=4,
         )
         cmd = [
             get_relative_file("builder.exe"),
