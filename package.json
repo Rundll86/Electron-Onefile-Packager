@@ -12,6 +12,6 @@
     "dist/eop.exe"
   ],
   "bin": {
-    "electron-eop": "dist/eop.exe"
+    "electron-ofp": "dist/eop.exe"
   }
 }
