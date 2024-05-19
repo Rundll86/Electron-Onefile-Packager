@@ -127,7 +127,6 @@ class workspaceOpreator:
     def build():
         usetime = time.time()
         args.deep = True
-        workspaceOpreator.clean()
         check_ehome()
         print("Checking write permission...")
         targetoutput = os.path.join("dist", config["project"]["name"] + ".exe")
@@ -136,6 +135,7 @@ class workspaceOpreator:
                 open(targetoutput, "wb")
             except:
                 throw("Cannot write file")
+        workspaceOpreator.clean()
         print("Setting up build temp...")
         if os.path.exists(config["build"]["temp"]):
             shutil.rmtree(config["build"]["temp"])
