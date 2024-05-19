@@ -163,6 +163,11 @@ class workspaceOpreator:
             ),
             ensure_ascii=False,
         )
+        iconpath = (
+            config["build"]["icon"]
+            if os.path.exists(config["build"]["icon"])
+            else get_relative_file("favicon.ico")
+        )
         cmd = [
             get_relative_file("builder.exe"),
             "-F",
@@ -173,6 +178,8 @@ class workspaceOpreator:
             config["build"]["temp"] + ";app",
             "--name",
             config["project"]["name"],
+            "-i",
+            iconpath,
         ]
         for i in config["build"]["nodeModules"]:
             if os.path.exists(os.path.join("node_modules", i)):
@@ -251,6 +258,7 @@ default_config = {
         "clean": False,
         "nodeModules": [],
         "showTime": False,
+        "icon": "favicon.ico",
     },
 }
 config = default_config
