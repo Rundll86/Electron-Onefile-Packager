@@ -180,7 +180,6 @@ class workspaceOpreator:
                     + ";"
                     + os.path.join("app/node_modules", i)
                 )
-        print(" ".join(cmd))
         threading.Thread(
             target=lambda: run_build(cmd, config["build"]["showTime"])
         ).start()
