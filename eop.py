@@ -172,31 +172,33 @@ class workspaceOpreator:
             if os.path.exists(config["build"]["icon"])
             else get_relative_file("favicon.ico")
         )
-        cmd = [
-            get_relative_file("builder.exe"),
-            "-F",
-            get_relative_file("entry.pyw"),
-            "--add-data",
-            os.path.dirname(ehome) + ";electron",
-            "--add-data",
-            config["build"]["temp"] + ";app",
-            "--name",
-            config["project"]["name"],
-            "-i",
-            iconpath,
-        ]
+        _nmsl = []
         for i in config["build"]["nodeModules"]:
-            if os.path.exists(os.path.join("node_modules", i)):
+            abspath = os.path.abspath(os.path.join("node_modules", i))
+            if os.path.exists(abspath):
                 print("Found valid module:", i)
-                data_name = (
-                    os.path.join("node_modules", i)
-                    + ";"
-                    + os.path.join("app/node_modules", i)
-                )
-                cmd.append("--add-data")
-                cmd.append(data_name)
+                _nmsl.append((abspath, "app/node_modules/" + i))
+        _nmsl.extend(
+            [
+                (os.path.dirname(ehome), "electron"),
+                (os.path.abspath(config["build"]["temp"]), "app"),
+            ]
+        )
+        buildspec = (
+            open(get_relative_file("build.spec"), encoding="utf8")
+            .read()
+            .replace("_name_", config["project"]["name"])
+            .replace("_main_", get_relative_file("entry.pyw"))
+            .replace("_datas_", repr(_nmsl))
+            .replace("_icon_", iconpath)
+        )
+        specname = f"{config['project']['name']}.spec"
+        open(specname, "w", encoding="utf8").write(buildspec)
         threading.Thread(
-            target=lambda: run_build(cmd, config["build"]["showTime"])
+            target=lambda: run_build(
+                [get_relative_file("pyinstaller.exe"), specname],
+                config["build"]["showTime"],
+            )
         ).start()
         pos = 0
         bar_length = 10
@@ -206,7 +208,6 @@ class workspaceOpreator:
         timer = 0
         print("Generating...Please wait.")
         while not buildok:
-            # while True:
             data = ""
             for i in range(bar_length):
                 if (i >= pos and i <= pos + runningbar_length - 1) or (
@@ -220,7 +221,7 @@ class workspaceOpreator:
             if pos == bar_length + 1:
                 pos = 1
             print(
-                f"<{data}> {flower[flower_pos]} {int((timer-timer%60)/60)}m{math.floor(timer)}s",
+                f"<{data}> {flower[flower_pos]} {math.floor(timer)}s",
                 end="\r",
                 flush=True,
             )

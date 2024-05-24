@@ -63,13 +63,15 @@ child_process.exec("python --version").addListener("exit", e => {
             console.log("Building CLI...");
             let A = child_process.spawn("pyinstaller", [
                 "-F",
-                relativeFile("eop.py"),
+                "eop.py",
                 "--add-data",
-                relativeFile("entry.pyw") + ";.",
+                "entry.pyw;.",
                 "--add-data",
-                relativeFile("pyinstaller.exe") + ";.",
+                "pyinstaller.exe;.",
                 "--add-data",
-                relativeFile("favicon.ico") + ";."
+                "favicon.ico;.",
+                "--add-data",
+                "build.spec;."
             ])
             A.addListener("exit", e => {
                 ok = true;
