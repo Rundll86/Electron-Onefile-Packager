@@ -9,7 +9,7 @@
   "author": "Rundll86",
   "license": "ISC",
   "files": [
-    "dist/eop.exe"
+    "install.js"
   ],
   "bin": {
     "electron-ofp": "dist/eop.exe"
