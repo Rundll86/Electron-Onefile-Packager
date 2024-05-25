@@ -24,6 +24,7 @@ A project profile usually be:
         "clean": false,
         "nodeModules": [],
         "showTime": false,
+        "showEntryInfo": true,
         "includesNodeModules": false
     },
     "electron": {
