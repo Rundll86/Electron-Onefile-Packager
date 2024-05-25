@@ -185,6 +185,7 @@ class workspaceOpreator:
                 "electron": os.path.join("electron", config["electron"]["bin"]),
                 "version": npm_package["version"],
                 "app": config["project"]["name"],
+                "show": config["build"]["showEntryInfo"],
             },
             open(get_relative_file("entry_profile.json"), "w", encoding="utf8"),
             ensure_ascii=False,
@@ -281,6 +282,7 @@ default_config = {
         "clean": False,
         "nodeModules": [],
         "showTime": False,
+        "showEntryInfo": True,
         "icon": "favicon.ico",
     },
     "electron": {
