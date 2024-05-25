@@ -309,11 +309,11 @@ npm_package = json.load(open(get_relative_file("package.json"), encoding="utf8")
 load_config()
 init_electron_home()
 print(f"Electron-OFP v{npm_package['version']}.")
+print("Command:", args.action.upper(), "\n")
 command_ok = False
 for i in workspaceOpreator.__dict__.keys():
     if check_string(args.action, i):
         command_ok = True
-        print("Command:", args.action.upper(), "\n")
         workspaceOpreator.__dict__[i]()
 if not command_ok:
     print("Invalid command!")
