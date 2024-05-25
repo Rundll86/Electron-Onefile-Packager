@@ -115,12 +115,14 @@ class argtype:
 class workspaceOpreator:
     def init():
         print("Initing workspace...")
+        things = 0
         if "electron" not in args.skip:
             url = "https://cdn.npmmirror.com/binaries/electron/v30.0.6/electron-v30.0.6-win32-x64.zip"
             download(url, "electron")
             extract_zip_with_progress("electron-v30.0.6-win32-x64.zip", "electron")
             os.remove("electron-v30.0.6-win32-x64.zip")
             config["electron"]["home"] = "electron"
+            things += 1
         if "profile" not in args.skip:
             print("Creating config file...")
             json.dump(
@@ -129,7 +131,8 @@ class workspaceOpreator:
                 ensure_ascii=False,
                 indent=4,
             )
-        print("Done.")
+            things += 1
+        print("Done." if things > 0 else "Nothing to do.")
 
     def build():
         usetime = time.time()
