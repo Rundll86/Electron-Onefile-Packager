@@ -113,6 +113,12 @@ class argtype:
 
 
 class workspaceOpreator:
+    def version():
+        print("Version:", npm_package["version"])
+        print("Github: Rundll86/Electron-Onefile-Packager")
+        print("NPM: electron-ofp")
+        print("Bilibili: 649063815")
+
     def init():
         print("Initing workspace...")
         things = 0
