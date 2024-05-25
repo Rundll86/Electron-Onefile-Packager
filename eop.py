@@ -293,4 +293,5 @@ init_electron_home()
 print(f"Electron-OFP v{npm_package['version']}.")
 for i in workspaceOpreator.__dict__.keys():
     if check_string(args.action, i):
+        print("Command:", args.action.upper(), "\n")
         workspaceOpreator.__dict__[i]()
