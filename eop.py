@@ -120,6 +120,7 @@ class workspaceOpreator:
             download(url, "electron")
             extract_zip_with_progress("electron-v30.0.6-win32-x64.zip", "electron")
             os.remove("electron-v30.0.6-win32-x64.zip")
+            config["electron"]["home"] = "electron"
         print("Creating config file...")
         json.dump(
             default_config,
