@@ -232,6 +232,7 @@ class workspaceOpreator:
             time.sleep(0.2)
             timer += 0.2
         usetime = int(time.time() - usetime)
+        print(f"Generated successfully. Use: {usetime}s" + " " * (runningbar_length))
         if config["build"]["clean"]:
             args.deep = False
             workspaceOpreator.clean()
