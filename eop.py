@@ -109,25 +109,26 @@ def base_clean():
 class argtype:
     action: str
     deep: bool
-    skip_electron: bool
+    skip: list[str]
 
 
 class workspaceOpreator:
     def init():
         print("Initing workspace...")
-        if not args.skip_electron:
+        if "electron" not in args.skip:
             url = "https://cdn.npmmirror.com/binaries/electron/v30.0.6/electron-v30.0.6-win32-x64.zip"
             download(url, "electron")
             extract_zip_with_progress("electron-v30.0.6-win32-x64.zip", "electron")
             os.remove("electron-v30.0.6-win32-x64.zip")
             config["electron"]["home"] = "electron"
-        print("Creating config file...")
-        json.dump(
-            default_config,
-            open(configname, "w", encoding="utf8"),
-            ensure_ascii=False,
-            indent=4,
-        )
+        if "profile" not in args.skip:
+            print("Creating config file...")
+            json.dump(
+                default_config,
+                open(configname, "w", encoding="utf8"),
+                ensure_ascii=False,
+                indent=4,
+            )
         print("Done.")
 
     def build():
@@ -266,7 +267,7 @@ class workspaceOpreator:
 parser = argparse.ArgumentParser()
 parser.add_argument("action")
 parser.add_argument("--deep", "-d", action="store_true", default=False)
-parser.add_argument("--skip-electron", "-s", action="store_true", default=False)
+parser.add_argument("--skip", "-s", nargs="+", default=[])
 args: argtype = parser.parse_args()
 unset_type = "!!UNSET"
 default_config = {
