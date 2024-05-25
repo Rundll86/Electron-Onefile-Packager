@@ -1,4 +1,4 @@
-import subprocess, os
+import subprocess, os, json
 
 
 def getRelativeFile(filename):
@@ -6,4 +6,10 @@ def getRelativeFile(filename):
 
 
 os.chdir(getRelativeFile("app"))
-subprocess.run([getRelativeFile("electron/electron.exe"), "."])
+subprocess.run(
+    [
+        json.load(open(getRelativeFile("entry_profile.json"), encoding="utf8"))["electron"],
+        ".",
+    ],
+    shell=True
+)

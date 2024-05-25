@@ -142,12 +142,10 @@ class workspaceOpreator:
             except:
                 throw("Cannot write file")
         workspaceOpreator.clean()
-        print("Setting up build temp...")
         if os.path.exists(config["build"]["temp"]):
             shutil.rmtree(config["build"]["temp"])
         os.mkdir(config["build"]["temp"])
-        print("Building dist...")
-        print("Copying renderer...")
+        print("Loading resource...")
         shutil.copy(config["project"]["entry"], config["build"]["temp"])
         for i in config["project"]["files"]:
             shutil.copy(i, config["build"]["temp"])
@@ -174,24 +172,32 @@ class workspaceOpreator:
             if os.path.exists(config["build"]["icon"])
             else get_relative_file("favicon.ico")
         )
+        print("Loading node_modules...")
         _nmsl = []
         for i in config["build"]["nodeModules"]:
             abspath = os.path.abspath(os.path.join("node_modules", i))
             if os.path.exists(abspath):
-                print("Found valid module:", i)
+                print("Found a valid node_module:", i)
                 _nmsl.append((abspath, "app/node_modules/" + i))
-        _nmsl.extend(
-            [
-                (os.path.dirname(ehome).replace("\\", "/"), "electron"),
-                (os.path.abspath(config["build"]["temp"]).replace("\\", "/"), "app"),
-            ]
+        print("Generating entry profile...")
+        json.dump(
+            {"electron": os.path.join("electron", config["electron"]["bin"])},
+            open(get_relative_file("entry_profile.json"), "w", encoding="utf8"),
+            ensure_ascii=False,
         )
+        print("Generating build spec...")
+        datas = [
+            (os.path.abspath(os.path.dirname(ehome)).replace("\\", "/"), "electron"),
+            (os.path.abspath(config["build"]["temp"]).replace("\\", "/"), "app"),
+            (get_relative_file("entry_profile.json"), "."),
+        ]
+        datas.extend(_nmsl)
         buildspec = (
             open(get_relative_file("build.spec"), encoding="utf8")
             .read()
             .replace("_name_", config["project"]["name"])
             .replace("_main_", get_relative_file("entry.pyw").replace("\\", "/"))
-            .replace("_datas_", repr(_nmsl))
+            .replace("_datas_", repr(datas))
             .replace("_icon_", iconpath.replace("\\", "/"))
         )
         specname = f"{config['project']['name']}.spec"

@@ -1,10 +1,10 @@
 **The CLI tools can generate a electron project's executable file(Only one file!)**  
 Usage:
-- Init: `build.bat`.
+- Init: `node install.js`.
 - Set `dist/eop.exe` to evironment.
-- Init project profile: `eop init`
+- Init project profile: `eop init [--skip-electron]`
 - Build executable file: `eop build`
-- Clean workspace: `eop clean`
+- Clean workspace: `eop clean [--deep]`
 
 A project profile usually be:
 ```json
@@ -25,6 +25,10 @@ A project profile usually be:
         "nodeModules": [],
         "showTime": false,
         "includesNodeModules": false
+    },
+    "electron": {
+        "home": "electron",
+        "bin": "electron.exe"
     }
 }
 ```
