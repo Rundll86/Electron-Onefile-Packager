@@ -287,7 +287,7 @@ default_config = {
         "icon": "favicon.ico",
     },
     "electron": {
-        "home": unset_type if args.skip_electron else "./electron",
+        "home": unset_type if "electron" in args.skip else "./electron",
         "bin": "electron.exe",
     },
 }
