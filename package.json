@@ -10,7 +10,11 @@
   "author": "Rundll86",
   "license": "ISC",
   "files": [
-    "install.js"
+    "install.js",
+    "build.spec",
+    "entry.pyw",
+    "eop.py",
+    "favicon.ico"
   ],
   "bin": {
     "electron-ofp": "dist/eop.exe"
