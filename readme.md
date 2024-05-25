@@ -1,7 +1,7 @@
 **The CLI tools can generate a electron project's executable file(Only one file!)**  
 Usage:
-- Init: `node install.js`.
-- Set `dist/eop.exe` to evironment.
+- Init: `node install.js`
+- Set `dist/eop.exe` to environment
 - Init project profile: `eop init [--skip-electron]`
 - Build executable file: `eop build`
 - Clean workspace: `eop clean [--deep]`
