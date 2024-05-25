@@ -182,17 +182,17 @@ class workspaceOpreator:
                 _nmsl.append((abspath, "app/node_modules/" + i))
         _nmsl.extend(
             [
-                (os.path.dirname(ehome), "electron"),
-                (os.path.abspath(config["build"]["temp"]), "app"),
+                (os.path.abspath(ehome).replace("\\", "/"), "electron"),
+                (os.path.abspath(config["build"]["temp"]).replace("\\", "/"), "app"),
             ]
         )
         buildspec = (
             open(get_relative_file("build.spec"), encoding="utf8")
             .read()
             .replace("_name_", config["project"]["name"])
-            .replace("_main_", get_relative_file("entry.pyw"))
+            .replace("_main_", get_relative_file("entry.pyw").replace("\\", "/"))
             .replace("_datas_", repr(_nmsl))
-            .replace("_icon_", iconpath)
+            .replace("_icon_", iconpath.replace("\\", "/"))
         )
         specname = f"{config['project']['name']}.spec"
         open(specname, "w", encoding="utf8").write(buildspec)
