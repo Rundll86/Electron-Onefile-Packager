@@ -72,7 +72,7 @@ child_process.exec("python --version").addListener("exit", e => {
                 "favicon.ico;.",
                 "--add-data",
                 "build.spec;."
-            ])
+            ]);
             A.addListener("exit", e => {
                 ok = true;
             });
