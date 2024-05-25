@@ -87,8 +87,9 @@ def load_config():
 
 def run_build(cmd, typea):
     global buildok
-    os.system(" ".join(cmd)) if typea else runcmd(cmd)
+    rtcode = os.system(" ".join(cmd)) if typea else runcmd(cmd).returncode
     buildok = True
+    return not rtcode
 
 
 def base_clean():
@@ -231,7 +232,6 @@ class workspaceOpreator:
             time.sleep(0.2)
             timer += 0.2
         usetime = int(time.time() - usetime)
-        print(f"Generated successfully. Use: {usetime}s" + " " * (runningbar_length))
         if config["build"]["clean"]:
             args.deep = False
             workspaceOpreator.clean()

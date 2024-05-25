@@ -56,7 +56,7 @@ child_process.exec("python --version").addListener("exit", e => {
             setTimeout(() => _run(cb), 200);
         };
         _run(() => {
-            try { fs.rmSync(relativeFile("pyinstaller.exe")) } catch { };
+            try { fs.rmSync("pyinstaller.exe") } catch { };
             let cmd = `copy "${child_process.execSync("where pyinstaller").toString().split("\n")[0]}" "${__dirname}"`;
             child_process.execSync(cmd);
             console.log("Built successfully.");
