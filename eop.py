@@ -7,14 +7,20 @@ def progressbar(percent, max):
 
 
 def download(url: str, frontstr=""):
+    global lastsize
+
     def _download(count, block_size, total_size):
+        global lastsize
         percent = count * block_size / total_size
+        newsize = os.path.getsize(filename)
         print(
-            f"Downloading: {frontstr} {progressbar(percent,10)} {round(percent*100,1)}%",
+            f"Downloading: {frontstr} {progressbar(percent,10)} {round(percent*100,1)}% {newsize-lastsize}Kb/s",
             end="\r",
         )
+        lastsize = newsize
 
     filename = extract_file_name(url)
+    lastsize = 0
     request.urlretrieve(url, filename, reporthook=_download)
     print("")
 
@@ -58,29 +64,32 @@ def runcmd(cmd):
 
 def init_electron_home():
     global ehome
-    ehome = os.environ.get("electron_home")
+    ehome = os.path.join(config["electron"]["home"], config["electron"]["bin"])
 
 
 def check_ehome():
     if not ehome or not os.path.exists(ehome):
-        throw("electron_home not found")
+        throw("electron home is invalid")
 
 
 def load_config():
     global config
+    config = default_config
     try:
-        config = default_config
         temp: dict = json.load(open(configname, encoding="utf8"))
         config["project"] |= temp.get("project") if temp.get("project") else {}
         config["build"] |= temp.get("build") if temp.get("build") else {}
-    except:
-        config = None
+        config["electron"] |= temp.get("electron") if temp.get("electron") else {}
+    except Exception as e:
+        print("Failed to load profile, using default.", e)
+        config = default_config
 
 
 def run_build(cmd, typea):
     global buildok
-    os.system(" ".join(cmd)) if typea else runcmd(cmd)
+    rtcode = os.system(" ".join(cmd)) if typea else runcmd(cmd).returncode
     buildok = True
+    return not rtcode
 
 
 def base_clean():
@@ -100,21 +109,17 @@ def base_clean():
 class argtype:
     action: str
     deep: bool
+    skip_electron: bool
 
 
 class workspaceOpreator:
     def init():
         print("Initing workspace...")
-        url = "https://cdn.npmmirror.com/binaries/electron/v30.0.6/electron-v30.0.6-win32-x64.zip"
-        download(url, "electron")
-        extract_zip_with_progress("electron-v30.0.6-win32-x64.zip", "electron")
-        os.remove("electron-v30.0.6-win32-x64.zip")
-        print("Registering electron_home...")
-        result = runcmd(
-            ["setx", "electron_home", os.path.abspath("electron/electron.exe")]
-        )
-        if result.returncode:
-            throw("Failed to register electron_home")
+        if not args.skip_electron:
+            url = "https://cdn.npmmirror.com/binaries/electron/v30.0.6/electron-v30.0.6-win32-x64.zip"
+            download(url, "electron")
+            extract_zip_with_progress("electron-v30.0.6-win32-x64.zip", "electron")
+            os.remove("electron-v30.0.6-win32-x64.zip")
         print("Creating config file...")
         json.dump(
             default_config,
@@ -168,31 +173,33 @@ class workspaceOpreator:
             if os.path.exists(config["build"]["icon"])
             else get_relative_file("favicon.ico")
         )
-        cmd = [
-            get_relative_file("builder.exe"),
-            "-F",
-            get_relative_file("entry.pyw"),
-            "--add-data",
-            os.path.dirname(ehome) + ";electron",
-            "--add-data",
-            config["build"]["temp"] + ";app",
-            "--name",
-            config["project"]["name"],
-            "-i",
-            iconpath,
-        ]
+        _nmsl = []
         for i in config["build"]["nodeModules"]:
-            if os.path.exists(os.path.join("node_modules", i)):
+            abspath = os.path.abspath(os.path.join("node_modules", i))
+            if os.path.exists(abspath):
                 print("Found valid module:", i)
-                data_name = (
-                    os.path.join("node_modules", i)
-                    + ";"
-                    + os.path.join("app/node_modules", i)
-                )
-                cmd.append("--add-data")
-                cmd.append(data_name)
+                _nmsl.append((abspath, "app/node_modules/" + i))
+        _nmsl.extend(
+            [
+                (os.path.dirname(ehome), "electron"),
+                (os.path.abspath(config["build"]["temp"]), "app"),
+            ]
+        )
+        buildspec = (
+            open(get_relative_file("build.spec"), encoding="utf8")
+            .read()
+            .replace("_name_", config["project"]["name"])
+            .replace("_main_", get_relative_file("entry.pyw"))
+            .replace("_datas_", repr(_nmsl))
+            .replace("_icon_", iconpath)
+        )
+        specname = f"{config['project']['name']}.spec"
+        open(specname, "w", encoding="utf8").write(buildspec)
         threading.Thread(
-            target=lambda: run_build(cmd, config["build"]["showTime"])
+            target=lambda: run_build(
+                [get_relative_file("pyinstaller.exe"), specname],
+                config["build"]["showTime"],
+            )
         ).start()
         pos = 0
         bar_length = 10
@@ -202,7 +209,6 @@ class workspaceOpreator:
         timer = 0
         print("Generating...Please wait.")
         while not buildok:
-            # while True:
             data = ""
             for i in range(bar_length):
                 if (i >= pos and i <= pos + runningbar_length - 1) or (
@@ -216,7 +222,7 @@ class workspaceOpreator:
             if pos == bar_length + 1:
                 pos = 1
             print(
-                f"<{data}> {flower[flower_pos]} {int((timer-timer%60)/60)}m{math.floor(timer)}s",
+                f"<{data}> {flower[flower_pos]} {math.floor(timer)}s",
                 end="\r",
                 flush=True,
             )
@@ -245,6 +251,12 @@ class workspaceOpreator:
         subprocess.run([ehome, config["project"]["entry"]])
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument("action")
+parser.add_argument("--deep", "-d", action="store_true", default=False)
+parser.add_argument("--skip-electron", "-s", action="store_true", default=False)
+args: argtype = parser.parse_args()
+unset_type = "!!UNSET"
 default_config = {
     "project": {
         "name": "some-app",
@@ -260,17 +272,17 @@ default_config = {
         "showTime": False,
         "icon": "favicon.ico",
     },
+    "electron": {
+        "home": unset_type if args.skip_electron else "./electron",
+        "bin": "electron.exe",
+    },
 }
 config = default_config
-parser = argparse.ArgumentParser()
-parser.add_argument("action")
-parser.add_argument("--deep", "-d", action="store_true", default=False)
-args: argtype = parser.parse_args()
-ehome = None
 configname = "eop.config.json"
+load_config()
+ehome = None
 buildok = False
 init_electron_home()
-load_config()
 for i in workspaceOpreator.__dict__.keys():
     if check_string(args.action, i):
         workspaceOpreator.__dict__[i]()
