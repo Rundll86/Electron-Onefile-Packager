@@ -181,7 +181,11 @@ class workspaceOpreator:
                 _nmsl.append((abspath, "app/node_modules/" + i))
         print("Generating entry profile...")
         json.dump(
-            {"electron": os.path.join("electron", config["electron"]["bin"])},
+            {
+                "electron": os.path.join("electron", config["electron"]["bin"]),
+                "version": npm_package["version"],
+                "app": config["project"]["name"],
+            },
             open(get_relative_file("entry_profile.json"), "w", encoding="utf8"),
             ensure_ascii=False,
         )
@@ -214,7 +218,7 @@ class workspaceOpreator:
         flower = "-\\|/"
         flower_pos = 0
         timer = 0
-        print("Generating...Please wait.")
+        print("Generating executable file...Please wait.")
         while not buildok:
             data = ""
             for i in range(bar_length):
