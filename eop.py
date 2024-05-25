@@ -77,9 +77,8 @@ def load_config():
     config = default_config
     try:
         temp: dict = json.load(open(configname, encoding="utf8"))
-        config["project"] |= temp.get("project") if temp.get("project") else {}
-        config["build"] |= temp.get("build") if temp.get("build") else {}
-        config["electron"] |= temp.get("electron") if temp.get("electron") else {}
+        for i in default_config.keys():
+            config[i] |= temp.get(i) if temp.get(i) else {}
     except Exception as e:
         print("Failed to load profile, using default.", e)
         config = default_config
