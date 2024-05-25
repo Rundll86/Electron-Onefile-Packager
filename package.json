@@ -4,7 +4,8 @@
   "description": "Package a electron project.",
   "main": "index.js",
   "scripts": {
-    "test": ";"
+    "test": ";",
+    "postinstall": "node install.js"
   },
   "author": "Rundll86",
   "license": "ISC",
