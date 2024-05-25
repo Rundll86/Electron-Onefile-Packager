@@ -182,7 +182,7 @@ class workspaceOpreator:
                 _nmsl.append((abspath, "app/node_modules/" + i))
         _nmsl.extend(
             [
-                (os.path.abspath(ehome).replace("\\", "/"), "electron"),
+                (os.path.dirname(ehome).replace("\\", "/"), "electron"),
                 (os.path.abspath(config["build"]["temp"]).replace("\\", "/"), "app"),
             ]
         )
