@@ -1,6 +1,6 @@
 {
   "name": "electron-ofp",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "Package a electron project.",
   "main": "index.js",
   "scripts": {
