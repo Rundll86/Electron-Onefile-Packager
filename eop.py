@@ -208,6 +208,7 @@ class workspaceOpreator:
             .replace("_main_", get_relative_file("entry.pyw").replace("\\", "/"))
             .replace("_datas_", repr(datas))
             .replace("_icon_", iconpath.replace("\\", "/"))
+            .replace("_console_", repr(config["build"]["showConsole"]))
         )
         specname = f"{config['project']['name']}.spec"
         open(specname, "w", encoding="utf8").write(buildspec)
@@ -286,6 +287,7 @@ default_config = {
         "clean": False,
         "nodeModules": [],
         "showTime": False,
+        "showConsole": False,
         "showEntryInfo": True,
         "icon": "favicon.ico",
     },
