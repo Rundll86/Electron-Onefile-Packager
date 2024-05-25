@@ -287,7 +287,7 @@ default_config = {
 config = default_config
 configname = "eop.config.json"
 buildok = False
-npm_package = json.load(open(get_relative_file("../package.json"), encoding="utf8"))
+npm_package = json.load(open(get_relative_file("package.json"), encoding="utf8"))
 load_config()
 init_electron_home()
 print(f"Electron-OFP v{npm_package['version']}.")

@@ -24,7 +24,9 @@ child_process.exec("python --version").addListener("exit", e => {
                     "--add-data",
                     "favicon.ico;.",
                     "--add-data",
-                    "build.spec;."
+                    "build.spec;.",
+                    "--add-data",
+                    "package.json;."
                 ]);
             } else {
                 process.exit(1);
