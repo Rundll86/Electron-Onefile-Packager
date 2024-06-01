@@ -17,6 +17,7 @@
     "favicon.ico"
   ],
   "bin": {
-    "electron-ofp": "dist/eop.exe"
+    "electron-ofp": "dist/eop.exe",
+    "eop": "dist/eop.exe"
   }
 }
