@@ -18,8 +18,8 @@
     "presets"
   ],
   "bin": {
-    "electron-ofp": "node run.js",
-    "eop": "node run.js"
+    "electron-ofp": "run.bat",
+    "eop": "run.bat"
   },
   "dependencies": {
     "type-electron": "^1.0.4"
