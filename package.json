@@ -14,7 +14,8 @@
     "build.spec",
     "entry.pyw",
     "eop.py",
-    "favicon.ico"
+    "favicon.ico",
+    "presets"
   ],
   "bin": {
     "electron-ofp": "dist/eop.exe",
