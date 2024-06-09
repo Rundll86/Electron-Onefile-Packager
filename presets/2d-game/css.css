@@ -1,0 +1,108 @@
+* {
+    margin: 0;
+    padding: 0;
+    color: white;
+}
+
+body {
+    background-color: #07081c;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    filter: brightness(100%);
+    overflow: hidden;
+    cursor: none;
+}
+
+canvas {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+#direct {
+    --t: 10s;
+    border: aqua 3px solid;
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    transition-duration: .2s;
+    transition-property: width, height;
+    background-color: transparent;
+    width: 50px;
+    height: 50px;
+    animation: rotateing 10s infinite linear;
+}
+
+.block.speeding {
+    --w: 70%;
+}
+
+.block.unspeeding {
+    --w: -25%;
+}
+
+.block {
+    --w: 0%;
+    background-color: aqua;
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    transition: all .2s ease-out;
+    transform: translate(50%, -50%) scale(1, 1) rotate(45deg);
+}
+
+.block.up {
+    right: 50%;
+    top: calc(var(--w) * -1);
+}
+
+
+.block.down {
+    right: 50%;
+    top: calc(100% + var(--w));
+}
+
+.block.left {
+    right: calc(var(--w) * -1);
+    top: 50%;
+}
+
+.block.right {
+    right: calc(100% + var(--w));
+    top: 50%;
+}
+
+.block.up.speeding,
+.block.down.speeding,
+.block.up.unspeeding,
+.block.down.unspeeding {
+    transform: translate(50%, -50%) scale(0.7, 1.5) rotate(45deg);
+}
+
+.block.left.speeding,
+.block.right.speeding,
+.block.left.unspeeding,
+.block.right.unspeeding {
+    transform: translate(50%, -50%) scale(1.5, 0.7) rotate(45deg);
+}
+
+@keyframes rotateing {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@property --w {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0%;
+}

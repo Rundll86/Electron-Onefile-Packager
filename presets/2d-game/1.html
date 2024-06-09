@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceShooting</title>
+</head>
+
+<body>
+    <canvas id="StarStage"></canvas>
+    <div id="direct">
+        <div class="block up"></div>
+        <div class="block down"></div>
+        <div class="block left"></div>
+        <div class="block right"></div>
+    </div>
+    <div style="margin-bottom: auto;margin-right: auto;margin-left: 20px;margin-top: 20px;">
+        速度：<span id="speed"></span>m/s<br>
+        倍率：<span id="score"></span>%<br>
+        积分：<span id="scorenum"></span><br>
+        额外积分增益：<span id="escore"></span>%
+    </div>
+    <link rel="stylesheet" href="./css.css">
+    <script>
+        var config;
+        function speedaa() {
+            let adds = Math.random();
+            showspeed += adds * 1000 * config.speeding_multiplier;
+            showspeed = Math.round(showspeed);
+        };
+        function speedrr(mul = 0.995) {
+            let adds = Math.random();
+            showspeed *= mul;
+            showspeed = Math.round(showspeed);
+        };
+        window.ReqFrame = (function () { return window.requestAnimationFrame })();
+        var Stage = document.getElementById("StarStage");
+        var direct = document.getElementById("direct");
+        var Context = Stage.getContext("2d");
+        var StarNum = 2000;
+        var StarRadius = '0.' + Math.floor(Math.random() * 10) + 1;
+        var HalfAStage = Stage.width * 2;
+        var Warp = 0;
+        var CenterX, CenterY;
+        var StarList = [], CurrentStar;
+        var i;
+        var Animatable = true;
+        var Speed;
+        var mousedown = false;
+        var mouserightdown = false;
+        var showspeed = 67000;
+        var speedlabel = document.getElementById("speed");
+        var scoremlabel = document.getElementById("score");
+        var scorenlabel = document.getElementById("scorenum");
+        var escorelabel = document.getElementById("escore");
+        var score = 0;
+        var mousex, mousey;
+        var scorem = 1;
+        var bubbleType = [2, 3];
+        var downKey = [];
+        var keylist = "abcdefghijklmnopqrstuvwxyz".split("");
+        var firingTime = 0;
+        window.addEventListener("keypress", e => {
+            for (let i in keylist) {
+                if (e.key === keylist[i]) {
+                    downKey.push(e.key);
+                    return;
+                };
+            };
+        });
+        window.addEventListener("keyup", e => {
+            downKey = downKey.filter(v => v !== e.key);
+        });
+        window.addEventListener("mousemove", e => {
+            CenterX = e.clientX;
+            CenterY = e.clientY;
+            direct.style.left = e.clientX + "px";
+            direct.style.top = e.clientY + "px";
+            mousex = e.clientX;
+            mousey = e.clientY;
+        });
+        window.addEventListener("mousedown", e => {
+            if (e.button === 0) { mousedown = true }
+            else if (e.button === 2) { mouserightdown = true; };
+            direct.style.width = e.button === 0 ? "30px" : "70px";
+            direct.style.height = e.button === 0 ? "30px" : "70px";
+            direct.style.animationDuration = "2s";
+            direct.querySelectorAll(".block").forEach(el => {
+                el.classList.add(e.button === 0 ? "speeding" : "unspeeding");
+            });
+            if (e.button === 0) {
+                CurrentStar = {
+                    x: mousex,
+                    y: mousey,
+                    z: 100,
+                    o: "1",
+                    t: 2
+                };
+                StarList.push(CurrentStar);
+            };
+        });
+        window.addEventListener("mouseup", e => {
+            if (e.button === 0) { mousedown = false }
+            else if (e.button === 2) { mouserightdown = false; };
+            direct.style.width = "50px";
+            direct.style.height = "50px";
+            direct.style.animationDuration = "10s";
+            direct.querySelectorAll(".block").forEach(el => {
+                el.classList.remove("speeding");
+                el.classList.remove("unspeeding");
+            });
+        });
+        window.addEventListener("contextmenu", e => { e.preventDefault(); });
+        Init();
+        function rate() {
+            return Math.random() < 0.5 ? 1 : -1;
+        };
+        function StartPlay() {
+            Speed = showspeed / 33500;
+            if (Animatable)
+                ReqFrame(StartPlay);
+            NextFrame();
+            DrawFrame();
+            speedlabel.innerText = showspeed;
+            scorem = (showspeed / 2000).toFixed(2);
+            scoremlabel.innerText = scorem;
+            scorenlabel.innerText = score;
+            escorelabel.innerText = (config.extra_score_multiplier * 100).toFixed(2);
+            if (mousedown) {
+                speedaa();
+            };
+            if (mouserightdown) {
+                speedrr();
+            };
+            if (downKey.includes("w")) {
+                if (firingTime === 5) {
+                    speedrr(0.999);
+                    let CurrentStar = {
+                        x: mousex,
+                        y: mousey,
+                        z: 100,
+                        o: "1",
+                        t: 3,
+                        f: [Math.random() * rate(), Math.random() * rate()]
+                    };
+                    StarList.push(CurrentStar);
+                    firingTime = 0;
+                } else {
+                    firingTime++;
+                };
+            };
+        };
+        function Init() {
+            CenterX = Stage.width / 2;
+            CenterY = Stage.height / 2;
+            StarList = [];
+            for (i = 0; i < StarNum; i++) {
+                CurrentStar = {
+                    x: Math.random() * Stage.width,
+                    y: Math.random() * Stage.height,
+                    z: Math.random() * Stage.width,
+                    o: '0.' + Math.floor(Math.random() * 99) + 1,
+                    t: 0
+                };
+                StarList.push(CurrentStar);
+                if (Math.random() < config.density_coefficient * 0.01) {
+                    CurrentStar = {
+                        x: Math.random() * Stage.width,
+                        y: Math.random() * Stage.height,
+                        z: Math.random() * Stage.width,
+                        o: "1",
+                        t: 1
+                    };
+                    StarList.push(CurrentStar);
+                };
+            };
+        };
+        function NextFrame() {
+            for (let i = 0; i < StarList.length; i++) {
+                let CurrentStar = StarList[i];
+                CurrentStar.z += (bubbleType.includes(CurrentStar.t) ? config.bubble_speed : -Speed);
+                if (CurrentStar.t === 3) {
+                    CurrentStar.x += CurrentStar.f[0];
+                    CurrentStar.y += CurrentStar.f[1];
+                };
+                if (CurrentStar.z <= 0 && CurrentStar.t !== 2) {
+                    CurrentStar.z = Stage.width;
+                };
+                if (CurrentStar.z >= Stage.width && bubbleType.includes(CurrentStar.t) || (CurrentStar.t === 3 && CurrentStar.z >= Stage.width / 2)) {
+                    StarList = StarList.filter((v) => v !== CurrentStar);
+                    continue;
+                };
+                if (bubbleType.includes(CurrentStar.t)) {
+                    for (let j = 0; j < StarList.length; j++) {
+                        let TargetStar = StarList[j];
+                        if (Math.abs(TargetStar.z - CurrentStar.z) < config.target_hitbox &&
+                            Math.abs(TargetStar.x - CurrentStar.x) < config.target_hitbox &&
+                            Math.abs(TargetStar.y - CurrentStar.y) < config.target_hitbox &&
+                            TargetStar.t === 1 &&
+                            i !== j) {
+                            StarList = StarList.filter((v) => v !== CurrentStar);
+                            TargetStar.z = Stage.width;
+                            score = Number(score);
+                            scorem = Number(scorem);
+                            score += scorem * (1 + config.extra_score_multiplier);
+                            score = score.toFixed(0);
+                        };
+                    };
+                };
+            };
+        };
+        function DrawFrame() {
+            var pixelX, pixelY, pixelRadius;
+            if (Stage.width != window.innerWidth || Stage.width != window.innerWidth) {
+                Stage.width = window.innerWidth;
+                Stage.height = window.innerHeight;
+                Init();
+            };
+            if (Warp == 0) {
+                Context.clearRect(0, 0, Stage.width, Stage.height);
+            };
+            for (i = 0; i < StarList.length; i++) {
+                CurrentStar = StarList[i];
+                pixelX = (CurrentStar.x - CenterX) * (HalfAStage / CurrentStar.z);
+                pixelX += CenterX;
+                pixelY = (CurrentStar.y - CenterY) * (HalfAStage / CurrentStar.z);
+                pixelY += CenterY;
+                pixelRadius = (CurrentStar.t === 0 ? 2 : CurrentStar.t === 1 ? 15 : 7) * (HalfAStage / CurrentStar.z);
+                Context.fillStyle = `rgba(${CurrentStar.t === 0 ? "209,255,255" : CurrentStar.t === 1 ? "255,0,0" : CurrentStar.t === 2 ? "0,255,0" : "255,136,0"},${CurrentStar.o})`;
+                Context.fillRect(pixelX, pixelY, pixelRadius, pixelRadius);
+            };
+        };
+        StartPlay();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,8 @@
+{
+    "target_hitbox": 10,
+    "speeding_multiplier": 1,
+    "bubble_speed": 10,
+    "density_coefficient": 2,
+    "devtool": true,
+    "extra_score_multiplier": 0.2
+}

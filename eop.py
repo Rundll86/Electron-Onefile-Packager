@@ -109,6 +109,7 @@ class argtype:
     action: str
     deep: bool
     skip: list[str]
+    use_preset: list[str]
 
 
 class workspaceOpreator:
@@ -137,6 +138,21 @@ class workspaceOpreator:
                 indent=4,
             )
             things += 1
+        if len(args.use_preset) == 0:
+            print(
+                "You can use a project preset to init.",
+                "By giving --use-preset <name>.",
+            )
+            print("Avaliable:", ", ".join(os.listdir(get_relative_file("presets"))))
+        else:
+            for i in args.use_preset:
+                preset_path = get_relative_file(os.path.join("presets", i))
+                if os.path.exists(preset_path) and os.path.isdir(preset_path):
+                    shutil.copytree(preset_path, ".", dirs_exist_ok=True)
+                    print(f"Using perset [{i}].")
+                    things += 1
+                else:
+                    print(f"Cannot find any presets named {i}, Skipped.")
         print("Done." if things > 0 else "Nothing to do.")
 
     def build():
@@ -277,6 +293,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("action")
 parser.add_argument("--deep", "-d", action="store_true", default=False)
 parser.add_argument("--skip", "-s", nargs="+", default=[])
+parser.add_argument("--use-preset", "-p", nargs="+", default=[])
 args: argtype = parser.parse_args()
 unset_type = "!!UNSET"
 default_config = {

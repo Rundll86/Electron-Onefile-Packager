@@ -1,0 +1,29 @@
+{
+    "project": {
+        "name": "some-app",
+        "entry": "index.js",
+        "files": [
+            "1.html",
+            "css.css",
+            "config.json",
+            "eop.config.json"
+        ],
+        "dirs": [],
+        "excludes": []
+    },
+    "build": {
+        "temp": "temp",
+        "clean": false,
+        "nodeModules": [
+            "type-electron"
+        ],
+        "showTime": false,
+        "showConsole": false,
+        "showEntryInfo": true,
+        "icon": "favicon.ico"
+    },
+    "electron": {
+        "home": "D:/Program Files (x86)/Electron",
+        "bin": "electron.exe"
+    }
+}

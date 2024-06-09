@@ -19,5 +19,8 @@
   "bin": {
     "electron-ofp": "dist/eop.exe",
     "eop": "dist/eop.exe"
+  },
+  "dependencies": {
+    "type-electron": "^1.0.4"
   }
 }
