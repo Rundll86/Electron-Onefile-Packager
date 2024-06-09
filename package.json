@@ -18,8 +18,8 @@
     "presets"
   ],
   "bin": {
-    "electron-ofp": "dist/eop.exe",
-    "eop": "dist/eop.exe"
+    "electron-ofp": "run.js",
+    "eop": "run.js"
   },
   "dependencies": {
     "type-electron": "^1.0.4"
