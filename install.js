@@ -26,7 +26,9 @@ child_process.exec("python --version").addListener("exit", e => {
                     "--add-data",
                     "build.spec;.",
                     "--add-data",
-                    "package.json;."
+                    "package.json;.",
+                    "--add-data",
+                    "presets;presets"
                 ]);
             } else {
                 throw new Error("Failed to build cli.");
