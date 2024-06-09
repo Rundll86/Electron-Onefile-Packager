@@ -3,11 +3,11 @@ const child_process = require("child_process");
 const fs = require('fs');
 child_process.exec("python --version").addListener("exit", e => {
     if (e !== 0) {
-        process.exit(1);
+        throw new Error("Cannot find python.");
     };
     child_process.exec("pip --version").addListener("exit", e => {
         if (e !== 0) {
-            process.exit(1);
+            throw new Error("Cannot find pip.");
         };
         let installProgress = child_process.exec("pip install pyinstaller");
         installProgress.addListener("exit", e => {
@@ -29,7 +29,7 @@ child_process.exec("python --version").addListener("exit", e => {
                     "package.json;."
                 ]);
             } else {
-                process.exit(1);
+                throw new Error("Failed to build cli.");
             };
         });
     });
