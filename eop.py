@@ -117,7 +117,7 @@ class workspaceOpreator:
         print("Version:", npm_package["version"])
         print("Github: Rundll86/Electron-Onefile-Packager")
         print("NPM: electron-ofp")
-        print("Bilibili: 649063815")
+        print("Bilibili: 649063815 Dr-Shrimp")
 
     def init():
         print("Initing workspace...")
@@ -293,9 +293,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument("action")
 parser.add_argument("--deep", "-d", action="store_true", default=False)
 parser.add_argument("--skip", "-s", nargs="+", default=[])
-parser.add_argument("--use-preset", "-p", nargs="+", default=[])
+parser.add_argument("--use-preset", "-up", nargs="+", default=[])
 args: argtype = parser.parse_args()
-unset_type = "!!UNSET"
+unset_type = "__UNSET_PATH__"
 default_config = {
     "project": {
         "name": "some-app",
@@ -307,7 +307,7 @@ default_config = {
     "build": {
         "temp": "temp",
         "clean": False,
-        "nodeModules": [],
+        "nodeModules": ["type-electron"],
         "showTime": False,
         "showConsole": False,
         "showEntryInfo": True,
