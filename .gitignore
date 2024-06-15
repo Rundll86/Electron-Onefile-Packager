@@ -1,3 +1,4 @@
 build
 dist
 pyinstaller.exe
+node_modules
