@@ -5,10 +5,9 @@ child_process.exec("python --version").addListener("exit", e => {
     if (e !== 0) {
         throw new Error("Cannot find python.");
     };
-    let test = child_process.exec("python version_test.py");
-    test.addListener("exit", e => {
+    child_process.exec("python version_test.py").addListener("exit", e => {
         if (e !== 0) {
-            throw new Error("Require python >= 3.9.7." + test.stdout.read().toString());
+            throw new Error("Require python >= 3.9.7.");
         };
         child_process.exec("pip --version").addListener("exit", e => {
             if (e !== 0) {
@@ -35,7 +34,7 @@ child_process.exec("python --version").addListener("exit", e => {
                         "--add-data",
                         "presets;presets"
                     ]).addListener("exit", e => {
-                        throw new Error("Failed to build cli.");
+                        if (e !== 0) { throw new Error("Failed to build cli."); };
                     });
                 } else {
                     throw new Error("Failed to build cli.");
