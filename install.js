@@ -34,10 +34,10 @@ child_process.exec("python --version").addListener("exit", e => {
                         "--add-data",
                         "presets;presets"
                     ]).addListener("exit", e => {
-                        if (e !== 0) { throw new Error("Failed to build cli."); };
+                        if (e !== 0) { throw new Error("Failed to generate builder CLI."); };
                     });
                 } else {
-                    throw new Error("Failed to build cli.");
+                    throw new Error("Failed to install pyinstaller.");
                 };
             });
         });
