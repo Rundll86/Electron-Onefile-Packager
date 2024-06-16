@@ -1,7 +1,7 @@
 const process = require("process");
 const child_process = require("child_process");
 const fs = require('fs');
-child_process.exec("python --version").addListener("exit", e => {
+child_process.exec("py --version").addListener("exit", e => {
     if (e !== 0) {
         throw new Error("Cannot find python.");
     };
