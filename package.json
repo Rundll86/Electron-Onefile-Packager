@@ -15,7 +15,8 @@
     "entry.pyw",
     "eop.py",
     "favicon.ico",
-    "presets"
+    "presets",
+    "version_test.py"
   ],
   "bin": {
     "electron-ofp": "run.bat",
