@@ -5,9 +5,10 @@ child_process.exec("python --version").addListener("exit", e => {
     if (e !== 0) {
         throw new Error("Cannot find python.");
     };
-    child_process.exec("python version_test.py").addListener("exit", e => {
+    let test = child_process.exec("python version_test.py");
+    test.addListener("exit", e => {
         if (e !== 0) {
-            throw new Error("Require python >= 3.9.7.");
+            throw new Error("Require python >= 3.9.7." + test.stdout.read().toString());
         };
         child_process.exec("pip --version").addListener("exit", e => {
             if (e !== 0) {
