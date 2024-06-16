@@ -225,7 +225,10 @@ class workspaceOpreator:
         buildspec = (
             open(get_relative_file("build.spec"), encoding="utf8")
             .read()
-            .replace("_name_", config["project"]["name"])
+            .replace(
+                "_name_",
+                config["project"]["name"] + "-v" + config["project"]["version"],
+            )
             .replace("_main_", get_relative_file("entry.pyw").replace("\\", "/"))
             .replace("_datas_", repr(datas))
             .replace("_icon_", iconpath.replace("\\", "/"))
@@ -299,6 +302,7 @@ unset_type = "__UNSET_PATH__"
 default_config = {
     "project": {
         "name": "some-app",
+        "version": "1.0.0",
         "entry": "index.js",
         "files": [],
         "dirs": [],
@@ -322,6 +326,7 @@ config = default_config
 configname = "eop.config.json"
 buildok = False
 npm_package = json.load(open(get_relative_file("package.json"), encoding="utf8"))
+project_npm_package = json.load(open("package.json", encoding="utf8"))
 load_config()
 init_electron_home()
 print(f"Electron-OFP v{npm_package['version']}.")
