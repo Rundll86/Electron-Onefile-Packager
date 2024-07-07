@@ -1,4 +1,4 @@
-import subprocess, os, json
+import subprocess, os, json, signal
 
 
 def getRelativeFile(filename):
@@ -21,8 +21,5 @@ process = subprocess.Popen(
     stderr=subprocess.STDOUT,
     stdin=subprocess.STDOUT,
 )
-try:
-    process.communicate()
-except KeyboardInterrupt:
-    print("KeyboardInterrupt")
-    process.kill()
+signal.signal(signal.SIGINT, lambda signum, frame: process.kill())
+process.wait()
