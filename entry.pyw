@@ -22,7 +22,7 @@ process = subprocess.Popen(
     stdin=subprocess.STDOUT,
 )
 try:
-    process.wait()
+    process.communicate()
 except KeyboardInterrupt:
     print("KeyboardInterrupt")
     process.kill()
