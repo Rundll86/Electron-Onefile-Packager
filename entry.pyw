@@ -11,10 +11,18 @@ if entryProfile["show"]:
     print(f"ApplicationName: {entryProfile['app']}.")
     print(f"ElectronCore: {entryProfile['electron']}.")
 os.chdir(getRelativeFile("app"))
-subprocess.run(
+process = subprocess.Popen(
     [
         getRelativeFile(entryProfile["electron"]),
         ".",
     ],
     shell=True,
+    stdout=subprocess.STDOUT,
+    stderr=subprocess.STDOUT,
+    stdin=subprocess.STDOUT,
 )
+try:
+    process.wait()
+except KeyboardInterrupt:
+    print("KeyboardInterrupt")
+    process.kill()
