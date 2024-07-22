@@ -1,4 +1,4 @@
-import subprocess, os, json, signal
+import subprocess, os, json
 
 
 def getRelativeFile(filename):
@@ -21,5 +21,4 @@ process = subprocess.Popen(
     stderr=subprocess.STDOUT,
     stdin=subprocess.STDOUT,
 )
-signal.signal(signal.SIGINT, lambda signum, frame: process.kill())
 process.wait()
