@@ -11,6 +11,10 @@ if entryProfile["show"]:
     print(f"ApplicationName: {entryProfile['app']}.")
     print(f"ElectronCore: {entryProfile['electron']}.")
 os.chdir(getRelativeFile("app"))
+print([
+        getRelativeFile(entryProfile["electron"]),
+        ".",
+    ])
 process = subprocess.Popen(
     [
         getRelativeFile(entryProfile["electron"]),
