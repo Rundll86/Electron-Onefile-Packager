@@ -11,18 +11,12 @@ if entryProfile["show"]:
     print(f"ApplicationName: {entryProfile['app']}.")
     print(f"ElectronCore: {entryProfile['electron']}.")
 os.chdir(getRelativeFile("app"))
-print([
-        getRelativeFile(entryProfile["electron"]),
-        ".",
-    ])
-process = subprocess.Popen(
-    [
-        getRelativeFile(entryProfile["electron"]),
-        ".",
-    ],
+process = subprocess.run(
+    " ".join(
+        [
+            getRelativeFile(entryProfile["electron"]),
+            ".",
+        ]
+    ),
     shell=True,
-    stdout=subprocess.STDOUT,
-    stderr=subprocess.STDOUT,
-    stdin=subprocess.STDOUT,
 )
-process.wait()
